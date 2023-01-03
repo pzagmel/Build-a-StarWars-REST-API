@@ -36,11 +36,20 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/user', methods=['GET'])
+@app.route('/users', methods=['GET'])
 def handle_hello():
 
     response_body = {
         "msg": "Hello, this is your GET /user response "
+    }
+
+    return jsonify(response_body), 200
+
+@app.route("/users/favorites", methods=["GET"])
+def get_fav_user():
+
+    response_body = {
+        "msg": "Get all the favorites that belong to the current user."
     }
 
     return jsonify(response_body), 200
@@ -59,6 +68,20 @@ def get_one_people(id):
         "mensaje": "aca estara la info del personaje con id "+str(id)
     })
 
+@app.route("/planets", methods=["GET"])
+def get_all_planets():
+
+    return jsonify({
+        "mensaje": "aca estaran todos los planetas"
+    })
+
+@app.route("/planets/<int:id>", methods=["GET"])
+def get_one_planet(id):
+
+    return jsonify({
+        "mensaje": "aca estara la info del planeta con id "+str(id)
+    })
+
 @app.route("/favorite/planet/<int:planet_id>", methods=['POST'])
 def post_fav_planet(planet_id):
     
@@ -66,6 +89,26 @@ def post_fav_planet(planet_id):
         "mensaje": "el planeta con id "+ str(planet_id) + " ha sido agregado"
     })
 
+@app.route("/favorite/people/<int:people_id>", methods=['POST'])
+def post_fav_people(people_id):
+    
+    return jsonify({
+        "mensaje": "el pesconaje con id "+ str(people_id) + " ha sido agregado"
+    })
+
+@app.route("/favorite/people/<int:people_id>", methods=['DELETE'])
+def delete_fav_people(people_id):
+    
+    return jsonify({
+        "mensaje": "el personaje con id "+ str(people_id) + " ha sido borrado"
+    })
+
+@app.route("/favorite/people/<int:planet_id>", methods=['DELETE'])
+def delete_fav_planet(planet_id):
+    
+    return jsonify({
+        "mensaje": "el planeta con id "+ str(planet_id) + " ha sido borrado"
+    })
 
 
 # this only runs if `$ python src/app.py` is executed
