@@ -45,6 +45,29 @@ def handle_hello():
 
     return jsonify(response_body), 200
 
+@app.route("/people", methods=["GET"])
+def get_all_people():
+
+    return jsonify({
+        "mensaje": "aca estaran todos los personajes"
+    })
+
+@app.route("/people/<int:id>", methods=["GET"])
+def get_one_people(id):
+
+    return jsonify({
+        "mensaje": "aca estara la info del personaje con id "+str(id)
+    })
+
+@app.route("/favorite/planet/<int:planet_id>", methods=['POST'])
+def post_fav_planet(planet_id):
+    
+    return jsonify({
+        "mensaje": "el planeta con id "+ str(planet_id) + " ha sido agregado"
+    })
+
+
+
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3000))
