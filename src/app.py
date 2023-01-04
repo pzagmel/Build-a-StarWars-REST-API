@@ -8,7 +8,7 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, People, Fav_People, Planet, Fav_Planet
 #from models import Person
 
 app = Flask(__name__)
@@ -84,21 +84,21 @@ def handle_hello():
     }
     return jsonify(new_users), 200
                 #all_users si fuera la forma corta
-@app.route("/user/favorites", methods=["GET"])
-def get_fav_user():
-
-    response_body = {
-        "msg": "Get all the favorites that belong to the current user."
-    }
-
-    return jsonify(response_body), 200
 
 @app.route("/people", methods=["GET"])
 def get_all_people():
 
-    return jsonify({
+    all_people = People.query.all()
+    new_people = []
+    for i in range(len(all_people)):
+        print(all_people[i].serialize())
+        new_people.append(all_people[i].serialize())
+    
+    response_body = {
         "mensaje": "aca estaran todos los personajes"
-    })
+    }
+    return jsonify(new_people), 200
+  
 
 @app.route("/people/<int:id>", methods=["GET"])
 def get_one_people(id):
@@ -110,9 +110,16 @@ def get_one_people(id):
 @app.route("/planets", methods=["GET"])
 def get_all_planets():
 
-    return jsonify({
+    all_planet = Planet.query.all()
+    new_planet = []
+    for i in range(len(all_planet)):
+        print(all_planet[i].serialize())
+        new_planet.append(all_planet[i].serialize())
+    
+    response_body = {
         "mensaje": "aca estaran todos los planetas"
-    })
+    }
+    return jsonify(new_planet), 200
 
 @app.route("/planets/<int:id>", methods=["GET"])
 def get_one_planet(id):
