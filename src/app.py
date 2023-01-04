@@ -36,16 +36,55 @@ def handle_invalid_usage(error):
 def sitemap():
     return generate_sitemap(app)
 
-@app.route('/users', methods=['GET'])
+@app.route('/user', methods=['GET'])
 def handle_hello():
+#debo traer a todos los usuarios ya registrados..., creo una variable all_users, a la tabla User.query, es decir una consulta, donde me quiero
+#traer todos.
+    all_users = User.query.all()
+#print(all_user[0].serialize())
+#con el print puedo ver usuarios registrados en la consola, si quiero al 
+#primer usuario print (all_user[0]) entonces ya tengo clase User que se 
+#identifica con el email(funcion representation)
+#ahora usaremos fx serialize, que me describe la informacion
+#print(all_user[0].serialize()) me traera su id y correo.
+#Nosotros tenemos una clase que define estructura de la base de datos
+# me traje a todos los usuarios y los puedo pintar. ahora si queiro ver a todos
+#los usuarios...sabemos que all_users es un arreglo y si agregara otro se suma
+#a lista, como itero en un arreglo? con un for in range en fx de todos
+#los usuarios que tenga (len(all_users)), voy a iterar cada unod e los elementos
+#del arreglo, ahora puedo mostrar todos, print (arreglo en posicion[i])i porque
+#tomara 0 hasta el total y eso.serialize para ejecutar fx que entrega sus valores.
+#con estas lineas de codigo hago que me muestre todos los usuarios del arreglo.
+#Ahora tenemos que guardar a estos usuarios, en un arreglo vacío new_users.
+    
+    new_users = []
+    for i in range(len(all_users)):
+        print(all_users[i].serialize())
+        new_users.append(all_users[i].serialize())
+#aqui hacemos esto para en lugar de tener la clase completam tenga el objeto, en 
+# lugar de retornar el response body ("hello,.."),  retorno todos y nuevos usuarios 
+# de la base de datos, si cambian su correo por ejemplo al pedirla llegarán los datos
+# actualizados     
 
+#En resumen tenemos ruta user con metodo Get, cada ruta tiene su fx y gracias a SQL alchemy
+#me traigo a todos los usuarios, como es un arreglo de clases y no puedo mostrarlas asi,vamos a 
+# irerar por sobre cada uno de ellos aplicando metodo serialize, me mostrará info en formato
+# diccionario (objeto) para poder leerlo de mejor forma y asi estando en un nuevo formato facil 
+# de leer lo guardo en un nuevo arreglo y lo retornas. ESTA ES LA FORMA LARGA      
+
+#FORMA CORTA, funcion map, retorna un arreglo y hacer algo en fx de ese arreglo, 
+#quiero que resultado sea una lista en un map dentro de una fx lambda y voy a recibir un usuario
+#y a ese usuario le pondre un serialize es decir por cada elemento del arreglo voy a serializar el
+#valor y lo guardare en la misma variable. es como el for in pero en forma resumida. list es para que
+#el resultado sea un arreglo.
+    
+    #all_users = list(map(lambda user: user.serialize() ,all_users))
     response_body = {
-        "msg": "Hello, this is your GET /user response "
+        "msg": "Hello, this is your GET /user response"
     }
-
-    return jsonify(response_body), 200
-
-@app.route("/users/favorites", methods=["GET"])
+    return jsonify(new_users), 200
+                #all_users si fuera la forma corta
+@app.route("/user/favorites", methods=["GET"])
 def get_fav_user():
 
     response_body = {
