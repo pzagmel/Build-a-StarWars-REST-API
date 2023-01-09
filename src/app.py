@@ -102,6 +102,32 @@ def one_user_mail(correo):
         return "el user no existe"
     else:
         return jsonify(one.serialize())
+#Post agregar nuevo user   
+@app.route("/user", methods=['POST'])
+def new_user():
+   
+    body = request.get_json()
+    print(body)
+    if( "email" not in body):
+        return "falta email"
+    if( "password" not in body):
+        return "falta password"
+
+    user = User.query.filter_by(email= body['email']).first()
+    if(user):
+        return "no puedo registrar  con este mail"
+
+    nuevo = User()
+    nuevo.email = body["email"]
+    nuevo.password = body["password"]
+    nuevo.is_active = True
+
+    db.session.add(nuevo)
+    db.session.commit()
+
+    return "ok"
+
+#[GET] /users/favorites Listar todos los favoritos que pertenecen al usuario actual. 
 
 @app.route("/people", methods=["GET"])
 def get_all_people():
@@ -155,21 +181,43 @@ def one_planet(id):
     #})
 
 @app.route("/favorite/planet/<int:planet_id>", methods=['POST'])
-def post_fav_planet(planet_id):
+def new_fav_planet(planet_id):
     
-    return jsonify({
-        "mensaje": "el planeta con id "+ str(planet_id) + " ha sido agregado"
-    })
+    nuevo_planet = Fav_Planet(planet_id)
+    nuevo.planet_name = body["planet_name"]
+    
+    nuevo_planet.is_active = True
+
+    db.session.add(nuevo_planet)
+    db.session.commit()
+
+    return "ok"
+    #return jsonify({
+    #    "mensaje": "el planeta con id "+ str(planet_id) + " ha sido agregado"
+    #})
 
 @app.route("/favorite/people/<int:people_id>", methods=['POST'])
 def post_fav_people(people_id):
     
-    return jsonify({
-        "mensaje": "el pesconaje con id "+ str(people_id) + " ha sido agregado"
-    })
+    nuevo_people = Fav_People(people_id)
+    nuevo.people_name = body["people_name"]
+    
+    nuevo_people.is_active = True
+
+    db.session.add(nuevo_people)
+    db.session.commit()
+
+    return "ok"
+    #return jsonify({
+    #    "mensaje": "el pesconaje con id "+ str(people_id) + " ha sido agregado"
+    #})
 
 @app.route("/favorite/people/<int:people_id>", methods=['DELETE'])
 def delete_fav_people(people_id):
+    
+    delete_people = Fav_People.query.get(people_id)
+    db.session.delete(delete_people)
+    db.session.commit()
     
     return jsonify({
         "mensaje": "el personaje con id "+ str(people_id) + " ha sido borrado"
@@ -178,10 +226,24 @@ def delete_fav_people(people_id):
 @app.route("/favorite/people/<int:planet_id>", methods=['DELETE'])
 def delete_fav_planet(planet_id):
     
+    delete_planet = Fav_Planet.query.get(planet_id)
+    db.session.delete(delete_planet)
+    db.session.commit()
+    
     return jsonify({
         "mensaje": "el planeta con id "+ str(planet_id) + " ha sido borrado"
     })
-
+    
+#delete user por id
+@app.route("/user/<int:id>", methods=['DELETE'])
+def delete(id):
+    user = User.query.get(id)
+    if(user):
+        db.session.delete(user)
+        db.session.commit()
+        return "user eliminado"
+    else:
+        return "user no existe"
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
