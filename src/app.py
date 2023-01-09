@@ -61,14 +61,14 @@ def handle_hello():
     for i in range(len(all_users)):
         print(all_users[i].serialize())
         new_users.append(all_users[i].serialize())
-#aqui hacemos esto para en lugar de tener la clase completam tenga el objeto, en 
+#aqui hacemos esto para en lugar de tener la clase completa tenga el objeto, en 
 # lugar de retornar el response body ("hello,.."),  retorno todos y nuevos usuarios 
 # de la base de datos, si cambian su correo por ejemplo al pedirla llegarán los datos
 # actualizados     
 
 #En resumen tenemos ruta user con metodo Get, cada ruta tiene su fx y gracias a SQL alchemy
 #me traigo a todos los usuarios, como es un arreglo de clases y no puedo mostrarlas asi,vamos a 
-# irerar por sobre cada uno de ellos aplicando metodo serialize, me mostrará info en formato
+# iterar por sobre cada uno de ellos aplicando metodo serialize, me mostrará info en formato
 # diccionario (objeto) para poder leerlo de mejor forma y asi estando en un nuevo formato facil 
 # de leer lo guardo en un nuevo arreglo y lo retornas. ESTA ES LA FORMA LARGA      
 
@@ -84,6 +84,24 @@ def handle_hello():
     }
     return jsonify(new_users), 200
                 #all_users si fuera la forma corta
+
+#si quiero solo 1 usuario por su id
+@app.route("/user/<int:id>", methods= ['GET'])
+def one_user(id):
+    one = User.query.get(id) 
+    if(one is None):
+        return "el user no existe"
+    else:
+        return jsonify(one.serialize())
+
+#si quiero solo 1 usuario por su email
+@app.route("/one/<correo>", methods= ['GET'])
+def one_user_mail(correo):
+    one = User.query.filter_by(email=correo).first()
+    if(one is None):
+        return "el user no existe"
+    else:
+        return jsonify(one.serialize())
 
 @app.route("/people", methods=["GET"])
 def get_all_people():
@@ -101,11 +119,15 @@ def get_all_people():
   
 
 @app.route("/people/<int:id>", methods=["GET"])
-def get_one_people(id):
-
-    return jsonify({
-        "mensaje": "aca estara la info del personaje con id "+str(id)
-    })
+def one_people(id):
+    onepeople = People.query.get(id) 
+    if(onepeople is None):
+        return "people no existe"
+    else:
+        return jsonify(onepeople.serialize())
+    #return jsonify({
+    #    "mensaje": "aca estara la info del personaje con id "+str(id)
+    #})
 
 @app.route("/planets", methods=["GET"])
 def get_all_planets():
@@ -122,11 +144,15 @@ def get_all_planets():
     return jsonify(new_planet), 200
 
 @app.route("/planets/<int:id>", methods=["GET"])
-def get_one_planet(id):
-
-    return jsonify({
-        "mensaje": "aca estara la info del planeta con id "+str(id)
-    })
+def one_planet(id):
+    oneplanet = Planet.query.get(id) 
+    if(oneplanet is None):
+        return "planet no existe"
+    else:
+        return jsonify(oneplanet.serialize())
+    #return jsonify({
+    #    "mensaje": "aca estara la info del planeta con id "+str(id)
+    #})
 
 @app.route("/favorite/planet/<int:planet_id>", methods=['POST'])
 def post_fav_planet(planet_id):
