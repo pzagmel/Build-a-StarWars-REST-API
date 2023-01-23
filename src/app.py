@@ -79,11 +79,13 @@ def handle_hello():
 #el resultado sea un arreglo.
     
     #all_users = list(map(lambda user: user.serialize() ,all_users))
-    response_body = {
-        "msg": "Hello, this is your GET /user response"
-    }
-    return jsonify(new_users), 200
+   
+    return jsonify(new_users),200
                 #all_users si fuera la forma corta
+
+#iterar por sobre el arreglo y por cada elemento del arreglo como era una clase llamar a su metodo serialize, 
+#guardar la info en un arreglo para poder retornarlo, eso es con metodo map, return jsonify(all_users) porque
+#es la variable donde guardé el arreglo.
 
 #si quiero solo 1 usuario por su id
 @app.route("/user/<int:id>", methods= ['GET'])
