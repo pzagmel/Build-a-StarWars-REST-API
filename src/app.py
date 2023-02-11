@@ -216,8 +216,9 @@ def post_fav_people(people_id):
 
 @app.route("/favorite/people/<int:people_id>", methods=['DELETE'])
 def delete_fav_people(people_id):
-    
-    delete_people = Fav_People.query.get(people_id)
+    user= User.query.filter_by(id=people_id).first()
+    print(user)
+    delete_people = Fav_People.query.filter_by(rel_user=user).first()
     db.session.delete(delete_people)
     db.session.commit()
     
@@ -225,13 +226,41 @@ def delete_fav_people(people_id):
         "mensaje": "el personaje con id "+ str(people_id) + " ha sido borrado"
     })
 
-@app.route("/favorite/people/<int:planet_id>", methods=['DELETE'])
+@app.route("/favorite/planet/<int:planet_id>", methods=['DELETE'])
 def delete_fav_planet(planet_id):
-    
-    delete_planet = Fav_Planet.query.get(planet_id)
+
+##hago consulta en tabla planet para filtrar fila planet_id
+    planet = Planet.query.filter_by(id=planet_id).first()
+
+
+
+
+    # planet = Fav_Planet.query.filter_by(planet_id)
+    # db.session.planet.delete(delete_fav_planet(planet_id))
+    # db.session.commit()
+
+    # planet = Planet.query.get(planet_id)
+    # if planet:
+    #     db.session.delete(planet)
+    #     db.session.commit()
+    #     return "Planeta eliminado", 204
+    # else:
+    #     return "Planeta no encontrado", 404
+
+
+    delete_planet = Fav_Planet.query.filter_by(planet_id)
     db.session.delete(delete_planet)
     db.session.commit()
     
+ 
+    fav_planet = Fav_Planet.query.get(planet_id)
+    if(fav_planet):
+        db.session.delete(fav_planet)
+        db.session.commit()
+        return "fav planet eliminado"
+    else:
+        return "fav planet no existe"
+
     return jsonify({
         "mensaje": "el planeta con id "+ str(planet_id) + " ha sido borrado"
     })
