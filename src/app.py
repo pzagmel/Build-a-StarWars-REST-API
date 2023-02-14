@@ -127,9 +127,50 @@ def new_user():
     db.session.add(nuevo)
     db.session.commit()
 
-    return "ok"
+    return {"msg":"user guardado"}
 
 #[GET] /users/favorites Listar todos los favoritos que pertenecen al usuario actual. 
+@app.route("/planet", methods=['POST'])
+def new_planet():
+   
+    body = request.get_json()
+    print(body)
+    if( "name" not in body):
+        return {"msg":"falta nombre del planeta"}
+
+    planet = Planet.query.filter_by(name= body['name']).first()
+    if(planet):
+        return {"msg":"este planeta ya existe"}
+
+    nuevo = Planet()
+    nuevo.name = body["name"]
+   
+
+    db.session.add(nuevo)
+    db.session.commit()
+
+    return {"msg":"planeta guardado"}
+
+@app.route("/people", methods=['POST'])
+def new_people():
+   
+    body = request.get_json()
+    print(body)
+    if( "name" not in body):
+        return {"msg":"falta nombre del personaje"}
+
+    people = People.query.filter_by(name= body['name']).first()
+    if(people):
+        return {"msg":"este personaje ya existe"}
+
+    nuevo = People()
+    nuevo.name = body["name"]
+   
+
+    db.session.add(nuevo)
+    db.session.commit()
+
+    return {"msg":"personaje guardado"}
 
 @app.route("/people", methods=["GET"])
 def get_all_people():
@@ -145,7 +186,6 @@ def get_all_people():
     }
     return jsonify(new_people), 200
   
-
 @app.route("/people/<int:id>", methods=["GET"])
 def one_people(id):
     onepeople = People.query.get(id) 
@@ -182,36 +222,61 @@ def one_planet(id):
     #    "mensaje": "aca estara la info del planeta con id "+str(id)
     #})
 
-@app.route("/favorite/planet/<int:planet_id>", methods=['POST'])
-def new_fav_planet(planet_id):
-    
-    nuevo_planet = Fav_Planet(planet_id)
-    nuevo.planet_name = body["planet_name"]
-    
-    nuevo_planet.is_active = True
+# @app.route("/users/favorites/", methods=['GET'])
+# def new_fa/users/favoritesv_planet(planet_id):
+# [GET] /users/favorites
+# [GET] 
+
+@app.route("/favorite/planet/<int:user_id>/<int:planet_id>", methods=['POST'])
+def new_fav_planet(user_id, planet_id):
+    print (user_id, planet_id)
+    # body = request.get_json()
+    # # if "planet_name" not in body:
+    # #     return jsonify({
+    # #     "mensaje": "Se requiere el nombre del planeta."
+    # # }), 400
+    user= User.query.filter_by(id=user_id).first()
+    if (user is None):
+        return {"msg":"user invalido"}
+    planet= Planet.query.filter_by(id=planet_id).first()
+    if (planet is None):
+        return {"msg":"planet invalido"}
+
+    nuevo_planet = Fav_Planet(planet= planet, user= user)
+    print(nuevo_planet)
 
     db.session.add(nuevo_planet)
     db.session.commit()
 
-    return "ok"
-    #return jsonify({
-    #    "mensaje": "el planeta con id "+ str(planet_id) + " ha sido agregado"
-    #})
+    return jsonify({
+       "mensaje": "el planeta con id "+ str(planet_id) + " ha sido agregado"
+    })
 
 @app.route("/favorite/people/<int:people_id>", methods=['POST'])
 def post_fav_people(people_id):
-    
-    nuevo_people = Fav_People(people_id)
-    nuevo.people_name = body["people_name"]
-    
-    nuevo_people.is_active = True
-
-    db.session.add(nuevo_people)
+       
+    user= User.query.filter_by(id=people_id).first()
+    print(user)
+    add_people = Fav_People.query.filter_by(rel_user=user).first()
+    db.session.add(add_people)
     db.session.commit()
+    
+    return jsonify({
+        "mensaje": "el personaje con id "+ str(people_id) + " ha sido agregado"
+    })
 
-    return "ok"
+    # nuevo_people = Fav_People(people_id)
+    # nuevo.people_name = body["people_name"]
+
+    
+    # # nuevo_people.is_active = True
+
+    # db.session.add(nuevo_people)
+    # db.session.commit()
+
+    # return "ok"
     #return jsonify({
-    #    "mensaje": "el pesconaje con id "+ str(people_id) + " ha sido agregado"
+    #    "mensaje": "el personaje con id "+ str(people_id) + " ha sido agregado"
     #})
 
 @app.route("/favorite/people/<int:people_id>", methods=['DELETE'])
@@ -231,9 +296,6 @@ def delete_fav_planet(planet_id):
 
 ##hago consulta en tabla planet para filtrar fila planet_id
     planet = Planet.query.filter_by(id=planet_id).first()
-
-
-
 
     # planet = Fav_Planet.query.filter_by(planet_id)
     # db.session.planet.delete(delete_fav_planet(planet_id))
@@ -272,7 +334,7 @@ def delete(id):
     if(user):
         db.session.delete(user)
         db.session.commit()
-        return "user eliminado"
+        return {"msg":"user con el id "+ str(id) + " ha sido eliminado"}
     else:
         return "user no existe"
 

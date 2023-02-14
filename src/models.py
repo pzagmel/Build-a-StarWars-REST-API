@@ -9,7 +9,7 @@ class User(db.Model):
     is_active = db.Column(db.Boolean(), unique=False, nullable=False)
 
     def __repr__(self): 
-        return '<User %r>' % self.email
+        return ' %r' % self.id
     #esta funcion representation es para que al traer info de base de datos pueda
     #identificarlo de alguna manera, en este caso con el email
     #el usuario xxx@gmail.com (fx solo se verá si haces print) para identificar o reconocer.BaseException()  
@@ -35,7 +35,7 @@ class People(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-    }
+        }
 class Fav_People(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     people_name = db.Column(db.String(120), db.ForeignKey("people.name"))
@@ -62,7 +62,7 @@ class Planet(db.Model):
     name = db.Column(db.String(120), unique=True, nullable=False)
 
     def __repr__(self): 
-        return '<Planet %r>' % self.name
+         return '%r' % self.id
 
     def serialize(self):
         return {
@@ -71,7 +71,11 @@ class Planet(db.Model):
     }
 class Fav_Planet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    planet_name = db.Column(db.String(120), db.ForeignKey("planet.name"))
-    user_fav = db.Column(db.String(120), db.ForeignKey("user.email"))
-    rel_planet = db.relationship("Planet")
-    rel_user = db.relationship("User")    
+    rel_planet = db.Column(db.Integer, db.ForeignKey("planet.id"))
+    rel_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    
+    planet = db.relationship("Planet", foreign_keys=[rel_planet])
+    user = db.relationship("User", foreign_keys=[rel_user_id]) 
+    
+
+  
