@@ -29,7 +29,7 @@ class People(db.Model):
     name = db.Column(db.String(120), unique=True, nullable=False)
 
     def __repr__(self): 
-        return '<People %r>' % self.name
+        return '%r' % self.id
 
     def serialize(self):
         return {
@@ -38,10 +38,10 @@ class People(db.Model):
         }
 class Fav_People(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    people_name = db.Column(db.String(120), db.ForeignKey("people.name"))
-    user_fav = db.Column(db.String(120), db.ForeignKey("user.email"))
-    rel_people = db.relationship("People")
-    rel_user = db.relationship("User")    
+    rel_people = db.Column(db.Integer, db.ForeignKey("people.id"))
+    rel_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))   
+    people = db.relationship("People", foreign_keys=[rel_people])
+    user = db.relationship("User", foreign_keys=[rel_user_id])  
 #definimos id de la tabla, nombre del personaje, qué usuario lo agregó a fav
 #esta info se alimenta de las otras tablas, db.ForeignKey y quien es su foreignkey
 #la tabla people en el campo name ("people.name") y el user_fav el FK es la tabla
@@ -72,8 +72,7 @@ class Planet(db.Model):
 class Fav_Planet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     rel_planet = db.Column(db.Integer, db.ForeignKey("planet.id"))
-    rel_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))
-    
+    rel_user_id = db.Column(db.Integer, db.ForeignKey("user.id"))   
     planet = db.relationship("Planet", foreign_keys=[rel_planet])
     user = db.relationship("User", foreign_keys=[rel_user_id]) 
     
